@@ -1,4 +1,7 @@
 #!/usr/bin/perl
+#
+# $Id: prtlostfiles,v 1.2 2003/10/27 07:51:16 opel Exp $
+#
 
 use strict;
 
