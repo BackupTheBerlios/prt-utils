@@ -10,7 +10,8 @@ prtorhpan \- list orphaned ports on your CRUX system
 .B prtorphan
 .SH DESCRIPTION
 
-The \fIprtorphan\fP script lists installed ports, which are not present
+Without any option the 
+\fIprtorphan\fP script lists installed ports, which are not present
 in the ports directories, configured in
 .B /etc/prtwash.conf\fP.
 It first scans all valid ports (a valid port is a port, where a Pkgfile
@@ -18,7 +19,13 @@ exists) and then looks for every installed package, if it is available as
 port.
 
 .SH OPTIONS
-No options yet.
+
+.TP
+.B "\-d" <directory>
+scans the given directory for files not part of a port. \fIprtorphan\fP scans
+the system packagae database for appearance of the files found in the given
+directory. If the file is not found in the package database, it is an
+orphan and printed on stdout.
 
 .SH AUTHOR
 

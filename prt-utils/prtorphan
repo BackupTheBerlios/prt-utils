@@ -1,32 +1,90 @@
 #!/usr/bin/perl
 #
-# $Id: prtorphan,v 1.1 2003/08/27 11:43:05 opel Exp $
+# $Id: prtorphan,v 1.2 2003/08/28 08:34:56 opel Exp $
 #
 # (c) 2003 by Martin Opel <mo@obbl-net.de>
 #
 
 use strict;
 
-my %validports = ();
-my $dir = "";
+my %options = %{getoptions(@ARGV)};
 
-%validports = %{getvalidports()};
+if ( $options{"-d"} ) {
+  #
+  # Directory mode to find orphaned files in a directory subtree
+  # -d <directory>
+  #
+  my $dir = $options{"-d"};
+  unless ( -d $dir ) { exiterr("directory does not exist: $dir\n"); }
+  my %files = %{getinstalledfiles()};
+  open(FILES, "find $dir -type f |")
+    or exiterr("could not execute find");
+  while (<FILES>) {
+    chomp;
+    s/^\///;
+    if ( $files{$_} != 1 ) {
+      print "/$_\n";
+    }
+  }
+  close(FILES);
+}
+else {
+  # 
+  # Standard mode to find orhpaned ports
+  #
+  my %validports = %{getvalidports()};
+  open(PKGS, "pkginfo -i |")
+    or exiterr("could not execute 'pkginfo -i'");
+  while (<PKGS>) {
+    my ($port, $version) = split ' ';
+    print "$port\n" unless $validports{$port}; 
+  }  
+  close(PKGS);
+}
 
-open(PKGS, "pkginfo -i |")
-  or die("could not execute 'pkginfo -i'");
-while (<PKGS>) {
-  my ($port, $version) = split ' ';
-  print "$port\n" unless $validports{$port}; 
-}  
-close(PKGS);
 exit 0;
 
 ######################## subroutines ########################
+sub getinstalledfiles {
+  my %files = ();
+  open(PKGDB, "/var/lib/pkg/db")
+    or exiterr("could not open package database");
+  my $port = <PKGDB>;
+  my $version = <PKGDB>;
+  while (<PKGDB>) {
+    chomp;
+    if ( /^$/ ) {
+      $port = <PKGDB>;
+      $version = <PKGDB>;
+    }
+    else {
+      $files{$_} = 1;
+    }
+  }
+  close(PKGDB);
+  return \%files;
+}
+
+sub getoptions {
+  my @args = reverse @_;
+  my %options = ();
+  
+  while (my $argument = pop @args) {
+    if ( $argument eq "-d" ) {
+      $options{"-d"} = pop @args;
+    }
+    else {
+      exiterr("unknown option: $argument");
+    }
+  } 
+  return \%options;
+}
+
 sub getvalidports {
   my %validports = ();
   my @dirlist = @{getportdirs()};
 
-  while ( $dir = pop @dirlist ) {
+  while ( my $dir = pop @dirlist ) {
     opendir(DIR, $dir)
       or exiterr("could not read dir $dir");  
     my $entry = "";
