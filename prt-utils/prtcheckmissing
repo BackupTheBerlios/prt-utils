@@ -1,4 +1,6 @@
 #!/usr/bin/perl
+#
+# $Id: prtcheckmissing,v 1.1 2003/10/27 15:26:50 opel Exp $
 
 use warnings;
 use strict;
