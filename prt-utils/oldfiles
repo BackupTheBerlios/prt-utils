@@ -1,0 +1,70 @@
+#!/bin/bash
+#
+# oldfiles: show a list of old sources / packages
+#           Use the script in a CRUX Linux machine
+#           where PKGMK_SOURE_DIR AND PKGMK_PACKAGE_DIR
+#           have been specifieed in /etc/pkgmk.conf
+#
+#           Requires prt-get 
+
+
+VERSION="0.1a"
+PKGMKCONF="/etc/pkgmk.conf"
+
+flist=/tmp/oldfiles-lst.$$
+slist=/tmp/oldfiles-src.$$
+tmpfile=/tmp/oldfiles-tmp.$$
+
+interrupted() {
+    rm -f $flist
+    rm -f $slist
+    rm -f $tmpfile
+    echo "=======> operation interrupted."
+    exit 1
+}
+
+trap "interrupted" SIGHUP SIGINT SIGQUIT SIGTERM
+
+if [ ! -f $PKGMKKCONF ]; then
+  echo "$PKGMKCONF not found, exiting."
+  exit 1
+fi
+
+. $PKGMKCONF
+
+# verify directories
+if [ ! -d "$PKGMK_SOURCE_DIR" ]; then
+  echo "$PKGMK_SOURCE_DIR does not exist, exiting."
+  exit 1
+fi
+if [ ! -d "$PKGMK_PACKAGE_DIR" ]; then
+  echo "$PKGMK_PACKAGE_DIR does not exist, exiting."
+  exit 1
+fi
+
+# sources
+for f in `prt-get printf "%p/%n/Pkgfile\n"`; do
+  source $f
+  for s in "${source[@]}"; do
+    echo $PKGMK_SOURCE_DIR/`basename $s` >> $tmpfile
+  done
+done
+
+sort $tmpfile > $slist
+find $PKGMK_SOURCE_DIR -maxdepth 1 -type f > $tmpfile
+sort $tmpfile > $flist
+comm -13 $slist $flist
+
+rm $tmpfile
+
+# packages
+prt-get printf "$PKGMK_PACKAGE_DIR/%n#%v-%r.pkg.tar.gz\n" >> $tmpfile
+
+sort $tmpfile > $slist
+find $PKGMK_PACKAGE_DIR -maxdepth 1 -type f > $tmpfile
+sort $tmpfile > $flist
+comm -13 $slist $flist
+
+rm -f $flist
+rm -f $slist
+rm -f $tmpfile
