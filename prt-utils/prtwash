@@ -92,7 +92,7 @@ getdirs() {
 
 	current=""
 	for s in `sed 's/^[ \t]*//;s/[ \t]*$//' \
-			 $CONFIGFILE|grep '^prtdir.*:'|sed 's/:/ /;s/,/ /;s/prtdir//'`
+			 $CONFIGFILE|grep '^prtdir.*:'|sed 's/:/ /;s/,/ /;s/prtdir//;s/#.*//'`
 	do
 		if [ "`echo $s|grep '/'`" != "" ]; then
 			current=$s
@@ -104,7 +104,7 @@ getdirs() {
 	done
 
 	for s in `sed 's/^[ \t]*//;s/[ \t]*$//;/:/d' \
-			 $CONFIGFILE|grep '^prtdir.*'|sed 's/prtdir//'`
+			 $CONFIGFILE|grep '^prtdir.*'|sed 's/prtdir//;s/#.*//'`
 	do
 		basedirs=(${basedirs[*]} $s)
 	done
