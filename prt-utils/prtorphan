@@ -1,0 +1,62 @@
+#!/usr/bin/perl
+#
+# $Id: prtorphan,v 1.1 2003/08/27 11:43:05 opel Exp $
+#
+# (c) 2003 by Martin Opel <mo@obbl-net.de>
+#
+
+use strict;
+
+my %validports = ();
+my $dir = "";
+
+%validports = %{getvalidports()};
+
+open(PKGS, "pkginfo -i |")
+  or die("could not execute 'pkginfo -i'");
+while (<PKGS>) {
+  my ($port, $version) = split ' ';
+  print "$port\n" unless $validports{$port}; 
+}  
+close(PKGS);
+exit 0;
+
+######################## subroutines ########################
+sub getvalidports {
+  my %validports = ();
+  my @dirlist = @{getportdirs()};
+
+  while ( $dir = pop @dirlist ) {
+    opendir(DIR, $dir)
+      or exiterr("could not read dir $dir");  
+    my $entry = "";
+    while ($entry = readdir(DIR)) {
+      next if ( $entry =~ /^\./ or ! -d "$dir/$entry" );
+      if ( -f "$dir/$entry/Pkgfile" ) {
+        $validports{$entry} = 1;
+      }
+    }
+    closedir(DIR);
+  }
+  return \%validports;
+}
+
+sub getportdirs {
+  my @ports = ();
+
+  open(PORTS, "/etc/prtwash.conf") 
+    or exiterr("could not open /etc/prtwash.conf");
+  while (<PORTS>) {
+    chomp;
+    push @ports, $_;
+  }
+  close(PORTS);
+  return \@ports;
+}
+
+sub exiterr {
+  my ($msg) = @_;
+
+  print "======> ERROR: $msg\n";
+  exit 1;
+}

@@ -1,0 +1,25 @@
+.\" 
+.\" prtorphan manual page.
+.\" (C) 2003 by Martin Opel <mo@obbl-net.de> 
+.\"
+.TH prtorphan 1
+.SH NAME
+prtorhpan \- list orphaned ports on your CRUX system
+.SH SYNOPSIS
+.PP
+.B prtorphan
+.SH DESCRIPTION
+
+The \fIprtorphan\fP script lists installed ports, which are not present
+in the ports directories, configured in
+.B /etc/prtwash.conf\fP.
+It first scans all valid ports (a valid port is a port, where a Pkgfile
+exists) and then looks for every installed package, if it is available as
+port.
+
+.SH OPTIONS
+No options yet.
+
+.SH AUTHOR
+
+\fIprtorphan\fP (c) was written by Martin Opel <mo@obbl-net.de> for CRUX Linux.
