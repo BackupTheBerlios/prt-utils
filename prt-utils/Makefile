@@ -1,5 +1,5 @@
 TOOLS 	= prtcreate prtrej prtsweep prtcheck prtwash prtreverse pkgsize \
-	  prtorphan
+	  prtorphan prtcheckmissing
 
 PREFIX	= /usr
 MANDIR	= $(PREFIX)/man

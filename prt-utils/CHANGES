@@ -3,8 +3,10 @@
 - prtrej now calls "diff -u"
 - scripts that need to cycle through the port tree now read
   port directories from /etc/prt-get.conf.
-- prtlostfiles is a new script, which scans the package db
-  /var/lib/pkg/db and looks in your filesystem, if the files really exist
+- prtcheckmissing is a new script, which scans the package db
+  /var/lib/pkg/db and looks in your filesystem, if the files really exist.
+  The most port is based on A. Pagaltzis' program published on the mailing
+  list.
 
 0.5 -> 0.5.1
 ------------
