@@ -153,6 +153,7 @@ sub getoptions {
 		$options{"-s"} = 1;
 	} else {
 		usage();
+		exit 1;
 	}
   } 
   return \%options;
