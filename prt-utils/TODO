@@ -1,4 +1,5 @@
 - test / rewrite / improve/ prtalien the tool is useful but could need 
   some work. (sip)
 - remove "-d" switch from prtorphan, because it does the some like prtalien
-  or remove prtalien (obbl)
+  or remove prtalien (obbl,sip)
+- change prtwash manpage. it contains still prtwash.conf (sip)

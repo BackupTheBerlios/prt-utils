@@ -2,7 +2,8 @@
 ------------
 - prtalien: new script, which does the same as "prtorphan -d"
 - prtsweep doesn't remove .nostrip file (opel)
-- prtorphan reads /etc/prt-get.conf instead of /etc/prt-wash.conf (opel)
+- prtorphan reads /etc/prt-get.conf instead of /etc/prt-wash.conf.
+  prtwash.conf was removed though. (opel)
 - prtrej now calls "diff -u"
 - scripts that need to cycle through the port tree now read
   port directories from /etc/prt-get.conf.
