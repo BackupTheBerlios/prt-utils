@@ -6,12 +6,11 @@
 # $ findredundantdeps *
 # $ findredundantdeps bmp
 
-# set -e
-# set -x
+# $Id: findredundantdeps,v 1.2 2005/04/01 12:35:01 sip Exp $
 
 usage()
 {
-    echo "usage: ${0##*/} <package>" >&2
+    echo "usage: ${0##*/} [-vfsh] <package>" >&2
     exit 1
 }
 
@@ -35,18 +34,56 @@ sortvar()
     done | sort -u
 }
 
-case $1 in
-    '-v')
-	shift
-	verbose=true
-	;;
-    ''|-*)
-	usage
-	;;
-    *)
-	:
-	;;
-esac
+sortvar_d()
+{
+    for d in $*; do
+	echo $d
+    done | sort| uniq -d
+}
+
+sortvar_u()
+{
+    for d in $*; do
+	echo $d
+    done | sort| uniq -u
+}
+
+verbose=false
+fixit=false
+suggest=false
+
+while [ $# -gt 0 ]; do
+    case $1 in
+	-v)
+	    shift
+	    verbose=true
+	    ;;
+	-f)
+	    shift
+	    fixit=true
+	    ;;
+	-s)
+	    shift
+	    suggest=true
+	    ;;
+	--*)
+	    echo "${0##*/} doesn't recognize -- gnu-longopts."
+            usage
+            exit 1
+	    ;;
+	-[a-zA-Z][a-zA-Z]*)
+            # split concatenated single-letter options apart
+            FIRST="$1"; shift
+            set -- `echo "$FIRST" | sed 's/^-\(.\)\(.*\)/-\1 -\2/'` "$@"
+            ;;
+	''|-*)
+	    usage
+	    ;;
+	*)
+	    break
+	    ;;
+    esac
+done
 
 for package in $*; do
     if prt-get info $package >/dev/null; then
@@ -62,16 +99,29 @@ for package in $*; do
 	deps=$(sortvar $deps)
 	subdeps=$(sortvar $subdeps)
 
-	res=$(for p in $deps $subdeps;do echo $p; done| sort| uniq -d)
+	res=$(sortvar_d $deps $subdeps)
 	# shudder
 	directdeps=$(prt-get info $package|awk '/^Dependencies:/ {print $2}'|tr ',' ' ')
 
-	redundant=$(for p in $res $directdeps;do echo $p; done| sort| uniq -d)
+	redundant=$(sortvar_d $res $directdeps)
+	# tranform \n in ' '
 	set -- $redundant
 	redundant=$*
 
 	if [ -n "$redundant" ]; then
-	    echo " * $package: $redundant"
+	    right=$(sortvar_u $redundant $directdeps)
+	    set -- $right
+	    right=$*
+	    echo "Redundant deps for $package are: $redundant"
+	    if [ "$suggest" = true ]; then
+		echo "Right is: # Depends on: $right"
+	    fi
+	    if [ "$fixit" = true ]; then
+		Pkgfile="$(prt-get info $package|awk '/Path:/ {print $2}')/$package/Pkgfile"
+		cp $Pkgfile ${Pkgfile}.orig
+		sed -i "s|^#.*Depends on:.*|# Depends on: $right|" $Pkgfile
+		echo " * Fixed $package"
+	    fi
 	else
 	    [ "$verbose" = true ] && echo " * $package is fine."
 	fi
