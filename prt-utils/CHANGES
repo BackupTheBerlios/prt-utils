@@ -1,3 +1,6 @@
+0.6.1 -> 0.6.2
+- prtreverse replaced by pkgexport by Andrew Green (simone)
+
 0.6.0 -> 0.6.1
 - prtrej now checks if /var/lib/pkg/rejected exists (simone)
 

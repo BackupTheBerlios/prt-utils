@@ -1,4 +1,4 @@
-TOOLS 	= prtcreate prtrej prtsweep prtcheck prtwash prtreverse pkgsize \
+TOOLS 	= prtcreate prtrej prtsweep prtcheck prtwash pkgexport pkgsize \
 	  prtorphan prtcheckmissing
 
 PREFIX	= /usr
