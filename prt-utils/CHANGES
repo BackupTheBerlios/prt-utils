@@ -1,5 +1,6 @@
 0.6.2 -> X.X.X
-- added "oldfiles"
+- added "oldfiles" (simone)
+- added "finddeps" (simone)
 
 0.6.1 -> 0.6.2
 - prtreverse replaced by pkgexport by Andrew Green (simone)
