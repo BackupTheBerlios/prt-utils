@@ -1,0 +1,27 @@
+#!/usr/bin/perl
+
+use strict;
+
+my $pkg_name;
+my $pkg_version;
+my $file;
+
+open(DB, "< /var/lib/pkg/db")
+  or die("Open DB");
+
+$pkg_name=<DB>;
+$pkg_version=<DB>;
+while ( $file = <DB>) {
+  chomp $file;
+  if ( $file =~ /^$/ ) {
+    $pkg_name = <DB>; chomp $pkg_name;
+    $pkg_version = <DB>; chomp $pkg_version;
+  } 
+  else {
+    if ( not -e "/$file" ) {
+      print "file $file of package $pkg_name is missing!\n";
+    }
+  }
+}
+
+close(DB);
