@@ -1,7 +1,7 @@
 #!/bin/sh
 #
-# $Id: prtrej,v 1.3 2004/02/05 01:25:27 sip Exp $
-# (c) 2003 by Martin Opel <mo@obbl-net.de>
+# $Id: prtrej,v 1.4 2004/02/06 11:30:00 opel Exp $
+# (c) 2003,2004 by Martin Opel <mo@obbl-net.de>
 # (c) 2002 by Markus Ackermann <maol@symlink.ch>
 #
 # may be redistributed and modified under the terms of the GPL
@@ -37,8 +37,8 @@ if [ ! -d "$REJ" ]; then
   exit 1
 fi
 
-for reject in `find /var/lib/pkg/rejected -type f`; do
-    real="`echo $reject | sed -e 's#^/var/lib/pkg/rejected##'`"
+for reject in `find $REJ -type f`; do
+    real=`echo $reject | sed -e "s#^$REJ##"`
     if diff $real $reject >/dev/null; then
 	rm $reject
 	count=`expr $count + 1`

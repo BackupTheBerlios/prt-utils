@@ -1,5 +1,5 @@
-0.6.0 -> xxxx
-- prtrej now checks if /var/lib/pkg/rejected exists
+0.6.0 -> 0.6.1
+- prtrej now checks if /var/lib/pkg/rejected exists (simone)
 
 0.5.1 -> 0.6
 ------------
