@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Id: prtorphan,v 1.4 2004/12/08 10:36:57 sip Exp $
+# $Id: prtorphan,v 1.5 2004/12/08 10:57:59 sip Exp $
 #
 # (c) 2003 by Martin Opel <mo@obbl-net.de>
 #
@@ -112,7 +112,6 @@ sub getportdirs {
       $port =~ s/^prtdir\s+//;
       $port =~ s/#(.*)$//;
       $port =~ s/\s+$//;
-      print ">" .$port . "<\n";
       push @ports, $port;
     }
   }
