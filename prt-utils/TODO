@@ -1,4 +1,2 @@
-- test / rewrite / improve/ prtalien the tool is useful but could need 
-  some work. (sip)
-- remove "-d" switch from prtorphan, because it does the some like prtalien
-  or remove prtalien (obbl,sip)
+- rewrite / improve prtalien. Will re-add the script to cvs when it's
+  kinda stable(TM) (sip).
