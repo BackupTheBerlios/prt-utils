@@ -1,3 +1,6 @@
+0.6.0 -> xxxx
+- prtrej now checks if /var/lib/pkg/rejected exists
+
 0.5.1 -> 0.6
 ------------
 - prtalien: new script, which does the same as "prtorphan -d"
