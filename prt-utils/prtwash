@@ -23,17 +23,15 @@
 #           execution would be useful.
 #
 
-VERSION="0.4"
-CONFIGFILE="/etc/prtwash.conf"
+VERSION="0.6"
+CONFIGFILE="/etc/prt-get.conf"
 
 usage() {
-# Displays usage. Yes, my name is Cptn. Obvious
     echo "Usage: prtwash [-p] [-s] [-d] [-t] [-a] <path>"
     exit 1
 }
 
 showversion() {
-# Displays usage. Yes, my name is Cptn. Obvious
     echo "prtwash" $VERSION
 	echo "(c) 2003 by Simone Rota"
 	echo "This program is distributed under the GNU GPL license"
@@ -86,6 +84,33 @@ getoptions () {
 	shift $(($OPTIND - 1))
 	prtdir="$@"
 }
+
+getdirs() {
+# scans /etc/prt-get.conf for port dirs to process
+	basedirs=()
+	singledirs=()
+
+	current=""
+	for s in `sed 's/^[ \t]*//;s/[ \t]*$//' \
+			 $CONFIGFILE|grep '^prtdir.*:'|sed 's/:/ /;s/,/ /;s/prtdir//'`
+	do
+		if [ "`echo $s|grep '/'`" != "" ]; then
+			current=$s
+		else
+			if [ "$current" != "" ]; then
+				singledirs=(${singledirs[*]} $current/$s)
+			fi	
+		fi
+	done
+
+	for s in `sed 's/^[ \t]*//;s/[ \t]*$//;/:/d' \
+			 $CONFIGFILE|grep '^prtdir.*'|sed 's/prtdir//'`
+	do
+		basedirs=(${basedirs[*]} $s)
+	done
+
+}
+
 
 remove() {
 # Removes a file/directory
@@ -213,7 +238,7 @@ auto=0
 getoptions $@
 checkparams $@
 
-#printparams
+getdirs
 
 if [ "$auto" = 0 ]
 then
@@ -221,12 +246,13 @@ then
 else
 	if [ ! -f "$CONFIGFILE" ]
 	then
-	    echo "sports: cannot find configuration file:" $CONFIGFILE
+	    echo "prtwash: cannot find configuration file:" $CONFIGFILE
 		exit -1
 	fi
 	echo "Analizing port tree..."
 
-  	for dir in `cat "$CONFIGFILE"`
+	# wash base dirs
+  	for dir in ${basedirs[*]}
 	do
         if [ -d "$dir" ]
     	then
@@ -241,6 +267,17 @@ else
 	        echo "'$dir': directory not found, check your configuration file!" 
 	    fi 
 	done 
+	
+	# wash custom dirs (see prt-get.conf)
+	for prtdir in ${singledirs[*]}
+	do
+ 		if [ -d "$prtdir" ] 
+ 		then
+ 			wash $prtdir
+ 		else
+ 			echo "'$prtdir': directory not found, check your configuration file!"
+ 		fi  	
+	done
 fi
 
 exit 0
