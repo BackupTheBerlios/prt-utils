@@ -1,24 +1,30 @@
 0.6.5 -> X.X.X
+--------------
 - added findredundantdeps script
 
 0.6.4 -> 0.6.5
+--------------
 - fixed config parser bug in prtorphan (trailing space
   and / or comment in the middle of the line)
 
 0.6.3 -> 0.6.4
+--------------
 - fixed bug in prtwash config parser. Thanks to Jason Pacheco
   for the  patch
 - prtwash: fixed spelling
 
 0.6.2 -> 0.6.3
+--------------
 - added "oldfiles" by Simone Rota (simone)
-- added "finddeps" by Joahannes Winkelmann (simone)
+- added "finddeps" by Johannes Winkelmann (simone)
 - added "dllist" by Johannes Winkelmann (simone)
 
 0.6.1 -> 0.6.2
+--------------
 - prtreverse replaced by pkgexport by Andrew Green (simone)
 
 0.6.0 -> 0.6.1
+------------
 - prtrej now checks if /var/lib/pkg/rejected exists (simone)
 
 0.5.1 -> 0.6
