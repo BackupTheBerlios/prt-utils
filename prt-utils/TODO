@@ -1,1 +1,3 @@
 - use /etc/prt-get.conf as config file for port directories
+- test / rewrite / improve/ prtalien the tool is useful but could need 
+  some work.
