@@ -249,7 +249,7 @@ else
 	    echo "prtwash: cannot find configuration file:" $CONFIGFILE
 		exit -1
 	fi
-	echo "Analizing port tree..."
+	echo "Analyzing port tree..."
 
 	# wash base dirs
   	for dir in ${basedirs[*]}
