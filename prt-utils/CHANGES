@@ -1,5 +1,6 @@
 0.5.1 -> 0.6
 ------------
+- prtrej now calls "diff -u"
 - scripts that need to cycle through the port tree now read
   port directories from /etc/prt-get.conf.
 
