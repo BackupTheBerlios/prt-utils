@@ -1,0 +1,79 @@
+#!/bin/sh
+# Find redundant dependencies
+# Johannes Winkelmann <jw at tks6 dot net>
+
+# $ cd /usr/ports/contrib
+# $ findredundantdeps *
+# $ findredundantdeps bmp
+
+# set -e
+# set -x
+
+usage()
+{
+    echo "usage: ${0##*/} <package>" >&2
+    exit 1
+}
+
+find_deps()
+{
+    if blaat=$(prt-get quickdep $1 2>/dev/null); then
+	result=${blaat%$1*}
+	if  [ -n "$result" ]; then
+	    echo "$result"
+	    return 0
+	else
+	    return 1
+	fi
+    fi
+}
+
+sortvar()
+{
+    for d in $*; do
+	echo $d
+    done | sort -u
+}
+
+case $1 in
+    '-v')
+	shift
+	verbose=true
+	;;
+    ''|-*)
+	usage
+	;;
+    *)
+	:
+	;;
+esac
+
+for package in $*; do
+    if prt-get info $package >/dev/null; then
+	deps=$(find_deps $package)
+	unset subdeps
+	for d in $deps; do
+	    if dep=$(find_deps $d); then
+		subdeps="$subdeps $dep"
+		# 	else
+		# 	    echo "Ignoring unknown dependency '$d' for '$package'"
+	    fi
+	done
+	deps=$(sortvar $deps)
+	subdeps=$(sortvar $subdeps)
+
+	res=$(for p in $deps $subdeps;do echo $p; done| sort| uniq -d)
+	# shudder
+	directdeps=$(prt-get info $package|awk '/^Dependencies:/ {print $2}'|tr ',' ' ')
+
+	redundant=$(for p in $res $directdeps;do echo $p; done| sort| uniq -d)
+	set -- $redundant
+	redundant=$*
+
+	if [ -n "$redundant" ]; then
+	    echo " * $package: $redundant"
+	else
+	    [ "$verbose" = true ] && echo " * $package is fine."
+	fi
+    fi
+done

@@ -1,5 +1,5 @@
 TOOLS 	= prtcreate prtrej prtsweep prtcheck prtwash pkgexport pkgsize \
-	  prtorphan prtcheckmissing oldfiles finddeps dllist
+	  prtorphan prtcheckmissing oldfiles finddeps dllist findredundantdeps
 
 PREFIX	= /usr
 MANDIR	= $(PREFIX)/man
