@@ -37,4 +37,4 @@ install-conf:
 	  fi; \
 	done
 
-install: install-man install-bin install-conf
+install: install-man install-bin # install-conf
