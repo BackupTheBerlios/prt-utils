@@ -1,3 +1,4 @@
-- use /etc/prt-get.conf as config file for port directories
 - test / rewrite / improve/ prtalien the tool is useful but could need 
-  some work.
+  some work. (sip)
+- remove "-d" switch from prtorphan, because it does the some like prtalien
+  or remove prtalien (obbl)

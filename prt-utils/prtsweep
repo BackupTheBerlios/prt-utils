@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# $Id: prtsweep,v 1.1 2003/08/27 11:43:05 opel Exp $
+# $Id: prtsweep,v 1.2 2003/12/17 21:17:02 opel Exp $
 # (c) 2002, 2003 by Martin Opel <martin@obbl-net.de>
 #
 # May be redistributed and modified under the terms of the GPL
@@ -112,6 +112,7 @@ sweep() {
     for f in `ls -a`; do
 	if [ "$f" != ".footprint" -a "$f" != ".md5sum" -a \
 	    "$f" != "Pkgfile" -a "$f" != "README" -a "$f" != "." -a \
+            "$f" != ".nostrip" -a \
 	    "$f" != "post-install" -a "$f" != ".." ]; then
 	    if ! echo $f | grep '.*#.*\.pkg\.tar\.gz' >/dev/null; then
 		if ! inlist $f ${pkgfiles[@]}; then

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Id: prtorphan,v 1.2 2003/08/28 08:34:56 opel Exp $
+# $Id: prtorphan,v 1.3 2003/12/17 21:17:02 opel Exp $
 #
 # (c) 2003 by Martin Opel <mo@obbl-net.de>
 #
@@ -101,12 +101,17 @@ sub getvalidports {
 
 sub getportdirs {
   my @ports = ();
+  my $conf = "/etc/prt-get.conf";
 
-  open(PORTS, "/etc/prtwash.conf") 
-    or exiterr("could not open /etc/prtwash.conf");
+  open(PORTS, $conf) 
+    or exiterr("could not open $conf");
   while (<PORTS>) {
     chomp;
-    push @ports, $_;
+    if ( /^prtdir\s+/ ) {
+      my $port = $_;
+      $port = s/^prtdir\s+(.*)$/\1/;
+      push @ports, $_;
+    }
   }
   close(PORTS);
   return \@ports;
