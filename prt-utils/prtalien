@@ -1,0 +1,88 @@
+#!/bin/bash
+#
+# a simple, inefficient bash script to identify files thad don't have
+# a corresponding entry in the CRUX port tree.
+#
+# notes: - requires prt-get
+#        - change tmp file paths if needed 
+
+FOOTPRINTS=/tmp/footprints.$$
+TMPFILE=/tmp/tmpalien.$$
+FOUNDFILES=/tmp/foundfiles.$$
+
+CONFIGFILE="/etc/prtalien.conf"
+
+version="0.1"
+
+
+Interrupted() {
+    rm -f $FOOTPRINTS $TMPFILE $FOUNDFILES
+}
+
+Usage() {
+	echo "Usage: prtalien [-a] [path] [expression]"
+	exit
+}
+
+Version() {
+	echo "prtalien" $version
+	echo "(c) 2003 by Simone Rota"
+	echo "This program is distributed under the GNU GPL license"
+	exit
+}
+
+getoptions () {
+    while getopts avh opt
+    do
+      case "$opt" in
+        a) allports=1;;
+		h) Usage
+		   exit 0
+		   ;;
+		v) Version
+		   exit 0
+		   ;;
+        \?) usage
+			exit -1
+			;;
+      esac
+    done
+	shift $(($OPTIND - 1))
+	searchparams="$@"
+}
+
+trap "Interrupted" 0 1 2 5 15
+
+allports=0
+searchparams=""
+getoptions $@
+
+if [ -z "$searchparams" ]; then
+  Usage
+fi
+
+# step 1): get the footprints from the port tree
+if [ $allports = 1 ]; then
+  for p in `prt-get list`; do
+     prt-get cat $p .footprint|awk '{print $3}' >>$TMPFILE
+  done
+else
+  for p in `prt-get listinst`; do
+     prt-get cat $p .footprint|awk '{print $3}' >>$TMPFILE
+  done
+fi
+sort -u $TMPFILE > $FOOTPRINTS
+
+
+# step 2): search for specified files, excluding patterns
+#         from config file
+find $searchparams >$TMPFILE
+sort -u $TMPFILE > $FOUNDFILES
+sed -i 's|^/||1' $FOUNDFILES
+for regx in `cat $CONFIGFILE`; do
+	sed -i '/'$regx'/d' $FOUNDFILES
+done
+
+
+# step 3): prints the differences between the two lists
+comm -13 $FOOTPRINTS $FOUNDFILES
