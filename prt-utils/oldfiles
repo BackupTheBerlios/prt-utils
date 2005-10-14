@@ -7,7 +7,7 @@
 # 
 # Requires prt-get by Johannes Winkelmann
 
-use warnings;
+#use warnings;
 use strict;
 use File::Basename;
 
@@ -106,11 +106,10 @@ foreach my $port (@ports) {
 
 		# Parse sources from Pkgfile
 		$pkgfile =~ s/\s{1,}/ /gi;			# remove multiple spaces
-		$pkgfile =~ s/\n//g;				# rmove newlines
+		$pkgfile =~ s/\n//g;				# remove newlines
 		$pkgfile =~ s/\\//g;				# remove '\'
 		$pkgfile =~ /source=\((.*?)\)/;		# get source array contents
 		$pkgfile = $1;						# prepare some tea
-	
 		# Add url(s)
 		my @psources = split(" ", $pkgfile);
 		foreach my $url (@psources) {
@@ -182,4 +181,3 @@ sub printdiff {
 		}
 	}	
 }
-
